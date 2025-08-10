@@ -1,6 +1,43 @@
 import { useQuery } from "@tanstack/react-query"
 import { api } from "../api"
 
+export interface PaymentSchedule {
+  id: string
+  debtId: string
+  amount: string
+  dueDate: string
+  isPaid: boolean
+  paidDate: string | null
+  paidAmount: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Debt {
+  id: string
+  debtorId: string
+  productName: string
+  date: string
+  deadline: string
+  comment: string
+  amount: string
+  paid: boolean
+  createdAt: string
+  updatedAt: string
+  paymentSchedules: PaymentSchedule[]
+}
+
+export interface Debtor {
+  id: string
+  sellerId: string
+  fullName: string
+  address: string
+  notice: string
+  createdAt: string
+  updatedAt: string
+  debts: Debt[]
+}
+
 export interface SellerData {
   id: string
   fullName: string
@@ -12,6 +49,7 @@ export interface SellerData {
   isActive: boolean
   createdAt: string
   updatedAt: string
+  debtors: Debtor[]
   statistics: {
     totalDebtBalance: number
     totalDebtorsCount: number
