@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useMutation } from "@tanstack/react-query"
 import { api } from "../api"
 
 export const useImage = (filename: string) => {
@@ -13,5 +13,23 @@ export const useImage = (filename: string) => {
     enabled: !!filename && filename !== "",
     staleTime: 5 * 60 * 1000, 
     gcTime: 10 * 60 * 1000    
+  })
+}
+
+export const useUploadImages = () => {
+  return useMutation({
+    mutationFn: async (files: File[]) => {
+      const formData = new FormData()
+      files.forEach((file, index) => {
+        formData.append(`images`, file)
+      })
+      
+      const response = await api.post('/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      return response.data
+    }
   })
 }

@@ -163,7 +163,7 @@ const Calendar = () => {
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-full">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-10 w-10 border-b-4 border-blue-600"></div>
             </div>
         )
     }
