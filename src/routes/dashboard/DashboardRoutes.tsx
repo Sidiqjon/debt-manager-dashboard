@@ -14,8 +14,8 @@ const DashboardRoutes = () => {
         <Route path={PATH.main} element={<Home />} />
         <Route path={PATH.calendar} element={<Calendar />} />
         <Route path={PATH.customers} element={<Customers />} />
-        <Route path={`${PATH.customers}/create`} element={<CreateDebtor />} />
-        <Route path={`${PATH.customers}/:id`} element={<DebtorDetail />} />
+        <Route path={PATH.createCustomer} element={<CreateDebtor />} />
+        <Route path={PATH.customerDetail} element={<DebtorDetail />} />
         <Route path={PATH.reports} element={<div>Hisobot Page</div>} />
         <Route path={PATH.settings} element={<div>Sozlamalar Page</div>} />
       </Routes>

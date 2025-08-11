@@ -6,5 +6,6 @@ export const PATH = {
   reports: "/reports",
   settings: "/settings",
   calendar: "/calendar" ,
-  createCustomer: "/customers/create"
+  createCustomer: "/customers/create",
+  customerDetail: "/customers/detail/:id"
 }

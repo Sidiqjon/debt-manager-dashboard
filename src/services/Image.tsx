@@ -21,7 +21,7 @@ export const useUploadImages = () => {
     mutationFn: async (files: File[]) => {
       const formData = new FormData()
       files.forEach((file, index) => {
-        formData.append(`images`, file)
+        formData.append(`files`, file)
       })
       
       const response = await api.post('/upload', formData, {

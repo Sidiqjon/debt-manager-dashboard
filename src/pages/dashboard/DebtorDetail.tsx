@@ -118,3 +118,134 @@ const DebtorDetail = () => {
 }
 
 export default DebtorDetail
+
+
+
+
+
+
+
+
+// ```json
+// {
+//   "statusCode": 200,
+//   "message": "Debtor retrieved successfully",
+//   "data": {
+//     "id": "a07c3bf5-b664-49eb-8520-7a36e80bc1fa",
+//     "sellerId": "6551a3e8-ae09-4acf-9509-3c13763e9016",
+//     "fullName": "seller2 debtor",
+//     "address": "123 Main Street, Tashkent 2",
+//     "notice": "Prefers evening contact 2",
+//     "createdAt": "2025-08-04T19:50:31.285Z",
+//     "updatedAt": "2025-08-04T19:50:31.285Z",
+//     "debts": [
+//       {
+//         "id": "1ab84ee0-1962-46e8-aca8-ec89f0ddc5b3",
+//         "debtorId": "a07c3bf5-b664-49eb-8520-7a36e80bc1fa",
+//         "productName": "iPhone 12 Pro Gold",
+//         "date": "2025-08-05T10:30:00.000Z",
+//         "deadline": "SIX_MONTHS",
+//         "comment": "iPhone Oldi!",
+//         "amount": "18000",
+//         "paid": false,
+//         "createdAt": "2025-08-04T20:10:55.583Z",
+//         "updatedAt": "2025-08-04T21:29:08.069Z",
+//         "paymentSchedules": [
+//           {
+//             "id": "0d85178d-404f-4458-bcd6-cb5242df7089",
+//             "debtId": "1ab84ee0-1962-46e8-aca8-ec89f0ddc5b3",
+//             "amount": "3000",
+//             "dueDate": "2025-12-05T10:30:00.000Z",
+//             "isPaid": false,
+//             "paidDate": null,
+//             "paidAmount": "0",
+//             "createdAt": "2025-08-04T20:10:55.587Z",
+//             "updatedAt": "2025-08-04T20:10:55.587Z"
+//           },
+//           {
+//             "id": "edc6abca-9b51-4f89-bfe3-dfbb73dcdc57",
+//             "debtId": "1ab84ee0-1962-46e8-aca8-ec89f0ddc5b3",
+//             "amount": "3000",
+//             "dueDate": "2026-01-05T10:30:00.000Z",
+//             "isPaid": false,
+//             "paidDate": null,
+//             "paidAmount": "0",
+//             "createdAt": "2025-08-04T20:10:55.587Z",
+//             "updatedAt": "2025-08-04T20:10:55.587Z"
+//           },
+//           {
+//             "id": "b43106d5-85f9-4dab-8cf6-0e52ce8b759a",
+//             "debtId": "1ab84ee0-1962-46e8-aca8-ec89f0ddc5b3",
+//             "amount": "3000",
+//             "dueDate": "2026-02-05T10:30:00.000Z",
+//             "isPaid": false,
+//             "paidDate": null,
+//             "paidAmount": "0",
+//             "createdAt": "2025-08-04T20:10:55.587Z",
+//             "updatedAt": "2025-08-04T20:10:55.587Z"
+//           },
+//           {
+//             "id": "fa7ed906-f2c9-4f49-babc-fdb5a7555405",
+//             "debtId": "1ab84ee0-1962-46e8-aca8-ec89f0ddc5b3",
+//             "amount": "3000",
+//             "dueDate": "2025-09-05T10:30:00.000Z",
+//             "isPaid": true,
+//             "paidDate": "2025-09-05T00:00:00.000Z",
+//             "paidAmount": "3000",
+//             "createdAt": "2025-08-04T20:10:55.587Z",
+//             "updatedAt": "2025-08-04T21:29:44.834Z"
+//           },
+//           {
+//             "id": "c2bfe0aa-1c99-46f1-b33b-1a6a9198a713",
+//             "debtId": "1ab84ee0-1962-46e8-aca8-ec89f0ddc5b3",
+//             "amount": "3000",
+//             "dueDate": "2025-10-05T10:30:00.000Z",
+//             "isPaid": true,
+//             "paidDate": "2025-10-05T00:00:00.000Z",
+//             "paidAmount": "3000",
+//             "createdAt": "2025-08-04T20:10:55.587Z",
+//             "updatedAt": "2025-08-04T21:38:04.682Z"
+//           },
+//           {
+//             "id": "c70301e1-fae0-4f7c-8664-6d702b30bcdb",
+//             "debtId": "1ab84ee0-1962-46e8-aca8-ec89f0ddc5b3",
+//             "amount": "3000",
+//             "dueDate": "2025-11-05T10:30:00.000Z",
+//             "isPaid": true,
+//             "paidDate": "2025-10-05T00:00:00.000Z",
+//             "paidAmount": "3000",
+//             "createdAt": "2025-08-04T20:10:55.587Z",
+//             "updatedAt": "2025-08-04T21:38:04.684Z"
+//           }
+//         ]
+//       }
+//     ],
+//     "phoneNumbers": [
+//       {
+//         "number": "+998901234567 2"
+//       },
+//       {
+//         "number": "+998901234568 2"
+//       }
+//     ],
+//     "debtorImages": [
+//       {
+//         "image": "image1.jpg"
+//       },
+//       {
+//         "image": "image2.png"
+//       }
+//     ],
+//     "seller": {
+//       "id": "6551a3e8-ae09-4acf-9509-3c13763e9016",
+//       "fullName": "Cristiano Ronaldo",
+//       "username": "seller2"
+//     },
+//     "remainingDebtBalance": "9000"
+//   }
+// } => here the returned data when you send a get a debtor by id request
+// ```
+
+// "Tahrirlash/O'chirish" modal appear as a dropdown from the 3-dot icon
+// in progress bar the green is the paid amount and the empty part is the unpaid part
+// in "Qo'shish" button you just write the word "Qo'shish" and leave an empty img src for icon I myself will place the needed icon.

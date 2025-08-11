@@ -7,12 +7,18 @@ import { useUploadImages } from "../../services/Image"
 import { CreateDebtorSchema } from "../../validation/Debtor"
 import { PATH } from "../../shared/hooks/Path"
 import goback_arrow from "../../assets/icons/goback_arrow.svg"
+import { IoIosAddCircle } from "react-icons/io";
+import { CiCircleRemove } from "react-icons/ci";
+import update from "../../assets/icons/update.svg"
+import uploadImg from "../../assets/icons/uploadImg.svg"
+import React from "react"
 
 const CreateDebtor = () => {
   const navigate = useNavigate()
   const [phoneNumbers, setPhoneNumbers] = useState([""]) 
   const [selectedImages, setSelectedImages] = useState<File[]>([])
   const [imagePreview, setImagePreview] = useState<string[]>([])
+  const [showNoticeInput, setShowNoticeInput] = useState(false)
 
   const { mutate: createDebtor, isPending } = useDebtor().createDebtor()
   const { mutate: uploadImages } = useUploadImages()
@@ -32,24 +38,30 @@ const CreateDebtor = () => {
         if (selectedImages.length > 0) {
           uploadImages(selectedImages, {
             onSuccess: (data) => {
-              imageFilenames = data.filenames || []
+              imageFilenames = data.filenames || data.fileNames || []
               submitDebtor(values, imageFilenames)
             },
-            onError: () => {
-              toast.error("Rasmlarni yuklashda xatolik")
+            onError: (error:unknown) => {
+                if (typeof error === "object" && error && "response" in error) {
+                  const axiosError = error as { response?: { data?: { message?: string } } };
+                  toast.error(axiosError.response?.data?.message || "Rasm yuklashda xatolik yuz berdi");
+                } else {
+                  toast.error("Rasm yuklashda xatolik yuz berdi");
+                }
             }
           })
         } else {
           submitDebtor(values, imageFilenames)
         }
       } catch (error) {
-        toast.error("Xatolik yuz berdi")
+        toast.error("Mijozni yaratishda xatolik yuz berdi!")
       }
     }
   })
 
   const submitDebtor = (values: any, images: string[]) => {
     const filteredPhoneNumbers = phoneNumbers.filter(phone => phone.trim())
+    console.log(images)
     
     createDebtor({
       ...values,
@@ -58,23 +70,34 @@ const CreateDebtor = () => {
     }, {
       onSuccess: (data) => {
         toast.success("Mijoz muvaffaqiyatli yaratildi")
-        navigate(`${PATH.customers}/${data.data.id}`)
+        navigate(`${PATH.customers}/detail/${data.data.id}`)
       },
-      onError: () => {
-        toast.error("Mijozni yaratishda xatolik")
+      onError: (error) => {
+        toast.error(error?.message || "Mijozni yaratishda xatolik")
       }
     })
   }
 
   const addPhoneNumber = () => {
-    setPhoneNumbers([...phoneNumbers, ""])
+    // setPhoneNumbers([...phoneNumbers, ""])
+    const updated = [...phoneNumbers, ""];
+    setPhoneNumbers(updated);
+    formik.setFieldValue("phoneNumbers", updated, true);
   }
 
   const updatePhoneNumber = (index: number, value: string) => {
     const updated = [...phoneNumbers]
     updated[index] = value
     setPhoneNumbers(updated)
-    formik.setFieldValue("phoneNumbers", updated)
+    formik.setFieldValue("phoneNumbers", updated, true)
+  }
+
+  const removePhoneNumber = (index: number) => {
+    if (phoneNumbers.length > 1) {
+      const updated = phoneNumbers.filter((_, i) => i !== index)
+      setPhoneNumbers(updated)
+      formik.setFieldValue("phoneNumbers", updated, true)
+    }
   }
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,29 +113,46 @@ const CreateDebtor = () => {
     })
   }
 
+  const replaceImage = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const updatedImages = [...selectedImages]
+      updatedImages[index] = file
+      setSelectedImages(updatedImages)
+
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const updatedPreviews = [...imagePreview]
+        updatedPreviews[index] = e.target?.result as string
+        setImagePreview(updatedPreviews)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   const removeImage = (index: number) => {
     setSelectedImages(prev => prev.filter((_, i) => i !== index))
     setImagePreview(prev => prev.filter((_, i) => i !== index))
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <div className="containers !pt-4">
         
         <div className="flex items-center justify-between mb-6">
-            <img
-                src={goback_arrow}
-                alt="Back"
-                className="w-5 h-5 cursor-pointer transform transition-transform duration-300 hover:scale-110"
-                onClick={() => navigate(PATH.customers)}
-            />
-            <h1 className="text-xl font-semibold text-gray-900">Mijoz yaratish</h1>
-            <div className="w-6 h-6"></div>
+          <img
+            src={goback_arrow}
+            alt="Back"
+            className="w-5 h-5 cursor-pointer transform transition-transform duration-300 hover:scale-110"
+            onClick={() => navigate(PATH.customers)}
+          />
+          <h1 className="text-xl font-semibold text-gray-900">Mijoz yaratish</h1>
+          <div className="w-6 h-6"></div>
         </div>
 
-        <form onSubmit={formik.handleSubmit} className="space-y-6">
+        <form onSubmit={formik.handleSubmit} className="space-y-6 pb-12">
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block text-sm font-medium text-[#000000] mb-2">
               Ismi <span className="text-red-500">*</span>
             </label>
             <input
@@ -122,7 +162,7 @@ const CreateDebtor = () => {
               value={formik.values.fullName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="w-full bg-gray-100 rounded-lg px-4 py-3 text-gray-700 placeholder-gray-500 focus:outline-none"
+              className="w-full bg-[#F6F6F6] border border-[#ECECEC] rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
             />
             {formik.touched.fullName && formik.errors.fullName && (
               <p className="text-red-500 text-sm mt-1">{formik.errors.fullName}</p>
@@ -130,75 +170,126 @@ const CreateDebtor = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block text-sm font-medium text-[#000000] mb-2">
               Telefon raqami <span className="text-red-500">*</span>
             </label>
             {phoneNumbers.map((phone, index) => (
-              <input
-                key={index}
-                type="text"
-                placeholder="Telefon raqami"
-                value={phone}
-                onChange={(e) => updatePhoneNumber(index, e.target.value)}
-                className="w-full bg-gray-100 rounded-lg px-4 py-3 text-gray-700 placeholder-gray-500 focus:outline-none mb-3"
-              />
+              <div key={index} className="flex items-center gap-[10px] mb-3">
+                <input
+                  type="text"
+                  placeholder="Telefon raqami"
+                  value={phone}
+                  onChange={(e) => updatePhoneNumber(index, e.target.value)}
+                  onBlur={() => formik.setFieldTouched(`phoneNumbers[${index}]`, true)}
+                  className="flex-1 bg-[#F6F6F6] border border-[#ECECEC] rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                />
+                {phoneNumbers.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removePhoneNumber(index)}
+                    className="w-9 h-9 flex items-center justify-center text-red-500 hover:bg-red-50 rounded-full"
+                  >
+                    <CiCircleRemove className="w-5 h-5 cursor-pointer" />
+                  </button>
+                )}
+              </div>
             ))}
+            {Array.isArray(formik.errors.phoneNumbers) &&
+              formik.errors.phoneNumbers.map((err, i) =>
+                err && (Array.isArray(formik.touched.phoneNumbers) ? formik.touched.phoneNumbers[i] : false) ? (
+                  <div key={i} className="text-red-500 text-sm">
+                    {err}
+                  </div>
+                ) : null
+              )}
+
             <button
               type="button"
               onClick={addPhoneNumber}
-              className="text-blue-600 text-sm font-medium"
+              className="flex items-center gap-2 text-blue-600 text-sm font-medium cursor-pointer"
             >
-              + Ko'proq qo'shish
+              <IoIosAddCircle className="w-5 h-5" />
+              Ko'proq qo'shish
             </button>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Yashash manzili</label>
+            <label className="block text-sm font-medium text-[#000000] mb-2">Yashash manzili <span className="text-red-500">*</span></label>
             <input
               type="text"
               name="address"
               placeholder="Yashash manzilini kiriting"
               value={formik.values.address}
               onChange={formik.handleChange}
-              className="w-full bg-gray-100 rounded-lg px-4 py-3 text-gray-700 placeholder-gray-500 focus:outline-none"
+              onBlur={formik.handleBlur}
+              className="w-full bg-[#F6F6F6] border border-[#ECECEC] rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
             />
+              {formik.touched.address && formik.errors.address && (
+                <div className="text-red-500 text-sm">{formik.errors.address}</div>)}
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Eslatma</label>
-            <input
-              type="text"
-              name="notice"
-              placeholder="Affiristlarga qoldi kunim"
-              value={formik.values.notice}
-              onChange={formik.handleChange}
-              className="w-full bg-gray-100 rounded-lg px-4 py-3 text-gray-700 placeholder-gray-500 focus:outline-none"
-            />
+            {!showNoticeInput ? (
+              <button
+                type="button"
+                onClick={() => setShowNoticeInput(true)}
+                className="w-full bg-white border border-[#ECECEC] rounded-xl px-4 py-3 flex items-center justify-center gap-2 text-blue-600 text-sm font-medium cursor-pointer"
+              >
+                <IoIosAddCircle className="w-5 h-5" />
+                Eslatma qo'shish
+              </button>
+            ) : (
+              <div>
+                <label className="block text-sm font-medium text-[#000000] mb-2">Eslatma</label>
+                <textarea
+                  name="notice"
+                  placeholder="Eslatma kiriting"
+                  value={formik.values.notice}
+                  onChange={formik.handleChange}
+                  rows={4} 
+                  className="w-full bg-[#F6F6F6] border border-[#ECECEC] rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 resize-none"
+                />
+              </div>
+            )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Rasm biriktirish</label>
+            <label className="block text-sm font-medium text-[#000000] mb-2">Rasm biriktirish</label>
             <div className="grid grid-cols-2 gap-4">
+
               {imagePreview.map((preview, index) => (
                 <div key={index} className="relative">
                   <img 
                     src={preview} 
                     alt="Preview" 
-                    className="w-full h-32 object-cover rounded-lg"
+                    className="w-full h-29 object-cover rounded-[16px] border border-[#ECECEC]"
                   />
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                    className="absolute top-[-5px] right-[-5px] w-5 h-5 flex items-center justify-center text-red-600 bg-white rounded-full hover:bg-red-200 cursor-pointer"
                   >
-                    ×
+                    <CiCircleRemove className="w-5 h-5" />
                   </button>
-                  <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
-                    O'zgartitrish
-                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => replaceImage(index, e)}
+                    className="hidden"
+                    id={`replace-image-${index}`}
+                  />
+                  <label
+                    htmlFor={`replace-image-${index}`}
+                    className="absolute inset-0 bg-black flex flex-col items-center justify-center cursor-pointer opacity-0 hover:opacity-40 transition-opacity rounded-[16px]"
+                  >
+                    <img src={update} alt="update img" className="w-5 h-5 text-white" />
+                    <p className="text-white text-xs">O'zgartirish</p>
+                  </label>
                 </div>
               ))}
-              <div className="border-2 border-dashed border-gray-300 rounded-lg h-32 flex flex-col items-center justify-center cursor-pointer">
+
+              
+              <div className="border-2 border-dashed border-gray-300 rounded-[16px] h-29 flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 transition-colors">
                 <input
                   type="file"
                   multiple
@@ -207,37 +298,28 @@ const CreateDebtor = () => {
                   className="hidden"
                   id="image-upload"
                 />
-                <label htmlFor="image-upload" className="cursor-pointer text-center">
-                  <div className="w-8 h-8 mx-auto mb-2">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M4 26.6667V5.33333C4 4.59695 4.29467 3.89057 4.82278 3.36556C5.35089 2.84056 6.06261 2.66667 6.8 2.66667H25.2C25.9374 2.66667 26.6491 3.01905 27.1772 3.54406C27.7053 4.06906 28 4.77543 28 5.51181V26.4882C28 27.2246 27.7053 27.9309 27.1772 28.4559C26.6491 28.981 25.9374 29.3333 25.2 29.3333H6.8C6.06261 29.3333 5.35089 29.1594 4.82278 28.6344C4.29467 28.1094 4 27.4031 4 26.6667Z" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M10.6667 13.3333C11.7713 13.3333 12.6667 12.438 12.6667 11.3333C12.6667 10.2287 11.7713 9.33333 10.6667 9.33333C9.56203 9.33333 8.66669 10.2287 8.66669 11.3333C8.66669 12.438 9.56203 13.3333 10.6667 13.3333Z" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M28 21.3334L21.3333 14.6667L6.8 29.3334" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                  <p className="text-gray-500 text-sm">Rasm qo'shish</p>
+                <label htmlFor="image-upload" className="cursor-pointer text-center flex flex-col items-center">
+                  <img src={uploadImg} alt="Upload" className="w-5 h-5 mb-1" />
+                  <p className="text-[#000000B2] text-xs">Rasm qo'shish</p>
                 </label>
               </div>
             </div>
           </div>
+
+          <div>
+            <button
+              type="button"
+              onClick={() => formik.handleSubmit()}
+              disabled={isPending}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white rounded-xl py-4 font-medium text-base disabled:cursor-not-allowed transition-colors cursor-pointer mt-4"
+            >
+              {isPending ? "Saqlanmoqda..." : "Saqlash"}
+            </button>
+          </div>
         </form>
-      </div>
-
-      <div className="fixed bottom-0 left-0 right-0 bg-white p-4">
-        <div className="containers">
-        <button
-        type="button"
-        onClick={() => formik.handleSubmit()}
-        disabled={isPending}
-        className="w-full bg-blue-600 text-white rounded-lg py-3 font-medium disabled:opacity-50"
-        >
-        {isPending ? "Saqlanmoqda..." : "Saqlash"}
-        </button>
-
-        </div>
       </div>
     </div>
   )
 }
 
-export default CreateDebtor
+export default React.memo(CreateDebtor)
