@@ -37,7 +37,7 @@ const Home = () => {
           <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200">
             <img src={imageUrl} alt="Profile" className="w-full h-full object-cover" />
           </div>
-          <span className="text-lg font-medium text-[#000000]">{seller?.fullName || "Testuchun"}</span>
+          <span className="text-lg font-medium capitalize text-[#000000]">{seller?.fullName || "Testuchun"}</span>
         </div>
         <div 
           className="w-10 h-10 bg-[#EDEDED] rounded-lg flex items-center justify-center cursor-pointer"

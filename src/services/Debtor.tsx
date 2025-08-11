@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query"
 import { api } from "../api"
 
 export interface PhoneNumber {
@@ -87,6 +87,8 @@ export interface SingleDebtorResponse {
 }
 
 export const useDebtor = () => {
+  const queryClient = useQueryClient()
+
   const getDebtors = (search?: string, page: number = 1, limit: number = 10) =>
     useQuery({
       queryKey: ["debtors", search, page, limit],
@@ -113,9 +115,23 @@ export const useDebtor = () => {
         api.post("/debtors", data).then(res => res.data as SingleDebtorResponse)
     })
 
+  const deleteDebtor = () =>
+    useMutation({
+      mutationFn: (id: string) =>
+        api.delete(`/debtors/${id}`).then(res => res.data),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['debtors'] })
+      },
+      onError: (error) => {
+        console.error('Error deleting debtor:', error)
+      }
+    })
+
+
   return {
     getDebtors,
     getDebtor,
-    createDebtor
+    createDebtor,
+    deleteDebtor
   }
 }

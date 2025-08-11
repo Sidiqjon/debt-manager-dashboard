@@ -46,8 +46,7 @@ const Customers = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#FFFFFF]">
-            <div className="containers !pt-4 relative">
+            <div className="containers min-h-screen bg-[#FFFFFF] !pt-4 relative">
                 <div className="mb-8 flex items-center justify-between gap-4">
                     <div className="flex-1 relative">
                         <input
@@ -76,10 +75,11 @@ const Customers = () => {
                         data?.data.debtors.map((debtor) => (
                             <div
                                 key={debtor.id}
-                                className="bg-[#F6F6F6] rounded-[16px] p-4 shadow-md border border-[#ECECEC] hover:transition-transform hover:scale-102"
+                                onClick={() => navigate(`/customers/detail/${debtor.id}`)}
+                                className="bg-[#F6F6F6] rounded-[16px] p-4 shadow-md border border-[#ECECEC] hover:transition-transform hover:scale-102 cursor-pointer"
                             >
                                 <div className="flex justify-between items-start mb-2">
-                                    <h3 className="text-lg font-semibold text-[#000000]">
+                                    <h3 className="text-lg font-semibold capitalize text-[#000000]">
                                         {debtor.fullName}
                                     </h3>
                                 </div>
@@ -98,19 +98,16 @@ const Customers = () => {
                     )}
                 </div>
 
-                <div className="sticky bottom-1">
-                    <div className="flex justify-end">
-                        <button
-                            onClick={() => navigate("/customers/create")}
-                            className="bg-[#3478F7] hover:bg-[#3478F74D] shadow-[0px_2px_4px_0px_#3478F74D] transition-all duration-300 ease-in-out transform hover:scale-102 text-white rounded-[10px] px-6 py-3 flex items-center space-x-2 font-medium cursor-pointer"
-                        >
-                            <img src={addDebtor} alt="add debtor" className="w-6 h-6" />
-                            <span>Yaratish</span>
-                        </button>
-                    </div>
+                <div className="flex justify-end sticky bottom-0 mt-4">
+                    <button
+                        onClick={() => navigate("/customers/create")}
+                        className="bg-[#3478F7] hover:bg-[#0951d8ce] shadow-[0px_2px_4px_0px_#3478F74D] transition-all duration-300 ease-in-out transform hover:scale-102 text-white rounded-[10px] px-6 py-3 flex items-center space-x-2 font-medium cursor-pointer"
+                    >
+                        <img src={addDebtor} alt="add debtor" className="w-6 h-6" />
+                        <span>Yaratish</span>
+                    </button>
                 </div>
             </div>
-        </div>
     )
 }
 
