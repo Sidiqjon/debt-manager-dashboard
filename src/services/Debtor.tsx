@@ -80,6 +80,15 @@ export interface CreateDebtorData {
   images: string[]
 }
 
+export interface UpdateDebtorData {
+  fullName: string
+  address: string
+  notice: string
+  phoneNumbers: string[]
+  images?: string[]
+}
+
+
 export interface SingleDebtorResponse {
   statusCode: number
   message: string
@@ -127,11 +136,20 @@ export const useDebtor = () => {
       }
     })
 
+  const updateDebtor = (id: string) =>
+    useMutation({
+      mutationFn: (body: UpdateDebtorData) =>
+        api.patch(`/debtors/${id}`, body).then(res => res.data),
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: ['debtors'] })
+    })
+
+
 
   return {
     getDebtors,
     getDebtor,
     createDebtor,
-    deleteDebtor
+    deleteDebtor,
+    updateDebtor
   }
 }

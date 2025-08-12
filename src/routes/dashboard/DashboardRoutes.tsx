@@ -6,6 +6,7 @@ import Customers from "../../pages/dashboard/Customers"
 import DashboardLayout from "../../provider/DashboardLayout"
 import CreateDebtor from "../../pages/dashboard/CreateDebtor"
 import DebtorDetail from "../../pages/dashboard/DebtorDetail"
+import UpdateDebtor from "../../pages/dashboard/UpdateDebtor"
 
 const DashboardRoutes = () => {
   return (
@@ -16,6 +17,7 @@ const DashboardRoutes = () => {
         <Route path={PATH.customers} element={<Customers />} />
         <Route path={PATH.createCustomer} element={<CreateDebtor />} />
         <Route path={PATH.customerDetail} element={<DebtorDetail />} />
+        <Route path={`${PATH.customers}/update/:id`} element={<UpdateDebtor />} />
         <Route path={PATH.reports} element={<div>Hisobot Page</div>} />
         <Route path={PATH.settings} element={<div>Sozlamalar Page</div>} />
       </Routes>
