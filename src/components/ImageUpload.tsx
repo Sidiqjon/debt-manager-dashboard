@@ -8,12 +8,14 @@ interface ImageUploadProps {
   initialImages?: string[]
   onImagesChange: (files: File[], previews: string[]) => void
   maxImages?: number
+  label: string
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({ 
     initialImages = [], 
     onImagesChange, 
-    maxImages = 10 
+    maxImages = 10 ,
+    label = "Rasm biriktirish"
   }) => {
   const [selectedImages, setSelectedImages] = useState<File[]>([])
   const [imagePreview, setImagePreview] = useState<string[]>([])
@@ -109,7 +111,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   return (
     <div>
-      <label className="block text-sm font-medium text-[#000000] mb-2">Rasm biriktirish</label>
+      <label className="block text-sm font-medium text-[#000000] mb-2">{label}</label>
       <div className="grid grid-cols-2 gap-4">
         {imagePreview.map((preview, index) => (
           <div key={index} className="relative">

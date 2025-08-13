@@ -257,6 +257,7 @@ const UpdateDebtor = () => {
             initialImages={initialImages}
             onImagesChange={handleImagesChange}
             maxImages={10}
+            label="Rasm biriktirish"
           />
 
           <div>

@@ -61,7 +61,6 @@ const CreateDebtor = () => {
 
   const submitDebtor = (values: any, images: string[]) => {
     const filteredPhoneNumbers = phoneNumbers.filter(phone => phone.trim())
-    console.log(images)
     
     createDebtor({
       ...values,

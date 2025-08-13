@@ -25,7 +25,7 @@ const DashboardLayout = ({children}:{children:ReactNode}) => {
       return location.pathname === PATH.main || location.pathname === PATH.calendar
     }
     else if (itemKey === PATH.customers) {
-      return location.pathname === PATH.customers || location.pathname === PATH.createCustomer || location.pathname.slice(0, 18) === "/customers/detail/" || location.pathname.slice(0, 18) === "/customers/update/"
+      return location.pathname === PATH.customers || location.pathname === PATH.createCustomer || location.pathname.slice(0, 18) === "/customers/detail/" || location.pathname.slice(0, 18) === "/customers/update/" || location.pathname.slice(0, 23) === "/customers/debt-detail/" || location.pathname.slice(0, 23) === "/customers/debt-create/"
     }
     return location.pathname === itemKey
   }

@@ -242,6 +242,7 @@ const DebtorDetail: React.FC = () => {
 
                 return (
                   <div
+                    onClick={() => navigate(`${PATH.customers}/debt-detail/${debt.id}`)}
                     key={debt.id}
                     className="bg-[#F6F6F6] border border-gray-100 rounded-2xl p-4 shadow-sm hover:transition-transform hover:scale-102 cursor-pointer"
                   >
@@ -287,6 +288,7 @@ const DebtorDetail: React.FC = () => {
         <div className="sticky bottom-1 z-10 mt-5">
           <div className="flex justify-end">
             <button
+              onClick={() => navigate(`${PATH.customers}/debt-create/${debtor.id}`)}
               className="bg-[#3478F7] hover:bg-[#0951d8ce] shadow-[0px_2px_4px_0px_#3478F74D] transition-all duration-300 ease-in-out transform hover:scale-102 text-white rounded-[10px] px-6 py-3 flex items-center space-x-2 font-medium cursor-pointer">
               <IoIosAddCircle className="w-6 h-6" />
               <span>Qo'shish</span>

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { api } from "../api"
 
 export interface ProductImage {
@@ -54,6 +54,16 @@ export interface DebtResponse {
   data: Debt
 }
 
+export interface CreateDebtData {
+  debtorId: string
+  productName: string
+  date: string
+  deadline: string
+  comment: string
+  amount: string
+  images: string[]
+}
+
 export const useDebt = () => {
   const getDebtById = (id: string) =>
     useQuery({
@@ -61,8 +71,15 @@ export const useDebt = () => {
       queryFn: () => api.get(`debts/${id}`).then(res => res.data as DebtResponse),
       enabled: !!id
     })
+    
+  const createDebt = () =>
+    useMutation({
+      mutationFn: (data: CreateDebtData) =>
+        api.post("/debts", data).then(res => res.data as DebtResponse)
+    })
 
   return {
-    getDebtById
+    getDebtById,
+    createDebt
   }
 }
