@@ -38,7 +38,7 @@ const CreateDebtor = () => {
         if (selectedImages.length > 0) {
           uploadImages(selectedImages, {
             onSuccess: (data) => {
-              imageFilenames = data.filenames || data.fileNames || []
+              imageFilenames = data.fileNames
               submitDebtor(values, imageFilenames)
             },
             onError: (error:unknown) => {

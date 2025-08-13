@@ -40,7 +40,7 @@ const UpdateDebtor = () => {
 
         if (selectedImages.length > 0) {
           const data = await uploadImages(selectedImages)
-          imageFilenames = data.filenames || data.fileNames || []
+          imageFilenames = data.fileNames
         }
 
         submitUpdate(values, imageFilenames)

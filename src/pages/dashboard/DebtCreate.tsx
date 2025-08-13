@@ -50,7 +50,7 @@ const DebtCreate: React.FC = () => {
   const calendarRef = useRef<HTMLDivElement>(null)
 
   const { mutate: createDebt, isPending } = useDebt().createDebt()
-  const { mutate: uploadImages } = useUploadImages()
+  const { mutateAsync: uploadImages } = useUploadImages()
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -63,42 +63,33 @@ const DebtCreate: React.FC = () => {
     validationSchema: CreateDebtSchema,
     onSubmit: async (values) => {
       try {
+
         let imageFilenames: string[] = []
-        
+
         if (selectedImages.length > 0) {
-          uploadImages(selectedImages, {
-            onSuccess: (data: any) => {
-              imageFilenames = data.filenames || data.fileNames || []
-              submitDebt(values, imageFilenames)
-            },
-            onError: (error: unknown) => {
-                if (typeof error === "object" && error && "response" in error) {
-                  const axiosError = error as { response?: { data?: { message?: string } } };
-                  toast.error(axiosError.response?.data?.message || "Rasm yuklashda xatolik yuz berdi");
-                } else {
-                  toast.error("Rasm yuklashda xatolik yuz berdi");
-                }
-            }
-          })
-        } else {
-          submitDebt(values, imageFilenames)
+          const data = await uploadImages(selectedImages)
+          imageFilenames = data.fileNames
         }
+        submitDebt(values, imageFilenames)
       } catch (error) {
-        toast.error("Nasiya yaratishda xatolik yuz berdi!")
+        if (typeof error === "object" && error && "response" in error) {
+          const axiosError = error as { response?: { data?: { message?: string } } }
+          toast.error(axiosError.response?.data?.message || "Rasm yuklashda xatolik yuz berdi")
+        } else {
+          toast.error("Rasm yuklashda xatolik yuz berdi")
+        }
       }
     }
   })
 
   const submitDebt = (values: FormValues, images: string[]) => {
-
     let isoDate = values.date
     if (values.date && values.date.includes(".")) {
-        const [day, month, year] = values.date.split(".")
-        const now = new Date()
-        const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds())
-        isoDate = dateObj.toISOString()
+      const [year, month, day] = values.date.split("T")[0].split("-");
+      const now = new Date()
+      const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds())
+      isoDate = dateObj.toISOString()
     }
-
     createDebt({
       debtorId: id!,
       ...values,
@@ -117,37 +108,37 @@ const DebtCreate: React.FC = () => {
     })
   }
 
-    const formatTodayDate = (): { iso: string, display: string } => {
+  const formatTodayDate = (): { iso: string, display: string } => {
     const now = new Date();
     const day = now.getDate().toString().padStart(2, '0');
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
     const year = now.getFullYear();
-    
-    return {
-        iso: now.toISOString(),
-        display: `${day}.${month}.${year}`
-    };
-    };
 
-    const handleTodayCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+    return {
+      iso: now.toISOString(),
+      display: `${day}.${month}.${year}`
+    };
+  };
+
+  const handleTodayCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = e.target.checked;
     setIsTodayChecked(isChecked);
-    
-    if (isChecked) {
-        const todayFormats = formatTodayDate();
-        formik.setFieldValue('date', todayFormats.iso); 
-        setDisplayDate(todayFormats.display); 
-    } else {
-        setDisplayDate("");
-    }
-    };
 
-    const handleDateSelect = (isoDate: string, displayDate: string) => {
-        formik.setFieldValue('date', isoDate); 
-        setDisplayDate(displayDate); 
-        setIsTodayChecked(false);
-        setShowCalendar(false);
-    };
+    if (isChecked) {
+      const todayFormats = formatTodayDate();
+      formik.setFieldValue('date', todayFormats.iso);
+      setDisplayDate(todayFormats.display);
+    } else {
+      setDisplayDate("");
+    }
+  };
+
+  const handleDateSelect = (isoDate: string, displayDate: string) => {
+    formik.setFieldValue('date', isoDate);
+    setDisplayDate(displayDate);
+    setIsTodayChecked(false);
+    setShowCalendar(false);
+  };
 
   const handleCalendarToggle = () => {
     setShowCalendar(!showCalendar)
@@ -176,7 +167,7 @@ const DebtCreate: React.FC = () => {
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
     setSelectedImages(prev => [...prev, ...files])
-    
+
     files.forEach(file => {
       const reader = new FileReader()
       reader.onload = (e) => {
@@ -211,7 +202,7 @@ const DebtCreate: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <div className="containers !pt-4">
-        
+
         <div className="flex items-center justify-between mb-6">
           <img
             src={goback_arrow}
@@ -273,10 +264,10 @@ const DebtCreate: React.FC = () => {
                   readOnly
                   className="w-full outline-none bg-[#F6F6F6] border border-[#ECECEC] placeholder-gray-400 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-blue-500 cursor-pointer"
                 />
-                <img 
-                  src={datecalendar} 
-                  alt="" 
-                  className="absolute right-3 bottom-4 cursor-pointer" 
+                <img
+                  src={datecalendar}
+                  alt=""
+                  className="absolute right-3 bottom-4 cursor-pointer"
                   onClick={handleCalendarToggle}
                 />
                 {showCalendar && (
@@ -308,27 +299,27 @@ const DebtCreate: React.FC = () => {
           <div>
             <label className="block text-sm font-medium text-[#000000] mb-2">Muddat <span className="text-red-500">*</span></label>
             <div className="relative">
-                <select
-                    name="deadline"
-                    value={formik.values.deadline}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    className="w-full bg-[#F6F6F6] border border-[#ECECEC] rounded-xl px-4 py-3 text-gray-900 cursor-pointer appearance-none pr-10 outline-none">
-                    <option value="" hidden>Qarz muddatini tanlang</option>
-                    <option value="" disabled>Oyni tanlang</option>
-                    {deadlineMap && Object.entries(deadlineMap).map(([key, value]) => (
-                        <option key={key} value={key}>
-                            {value}
-                        </option>
-                    ))}
-                </select>
-                <svg
-                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-black"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+              <select
+                name="deadline"
+                value={formik.values.deadline}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="w-full bg-[#F6F6F6] border border-[#ECECEC] rounded-xl px-4 py-3 text-gray-900 cursor-pointer appearance-none pr-10 outline-none">
+                <option value="" hidden>Qarz muddatini tanlang</option>
+                <option value="" disabled>Oyni tanlang</option>
+                {deadlineMap && Object.entries(deadlineMap).map(([key, value]) => (
+                  <option key={key} value={key}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+              <svg
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-black"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
             {formik.touched.deadline && formik.errors.deadline && (
               <p className="text-red-500 text-sm mt-1">{formik.errors.deadline}</p>
@@ -353,7 +344,7 @@ const DebtCreate: React.FC = () => {
                   placeholder="Izoh yozing"
                   value={formik.values.comment}
                   onChange={formik.handleChange}
-                  rows={4} 
+                  rows={4}
                   className="w-full bg-[#F6F6F6] border border-[#ECECEC] rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 resize-none"
                 />
               </div>
@@ -366,9 +357,9 @@ const DebtCreate: React.FC = () => {
 
               {imagePreview.map((preview, index) => (
                 <div key={index} className="relative">
-                  <img 
-                    src={preview} 
-                    alt="Preview" 
+                  <img
+                    src={preview}
+                    alt="Preview"
                     className="w-full h-29 object-cover rounded-[16px] border border-[#ECECEC]"
                   />
                   <button
@@ -395,7 +386,7 @@ const DebtCreate: React.FC = () => {
                 </div>
               ))}
 
-              
+
               <div className="border-2 border-dashed border-gray-300 rounded-[16px] h-29 flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 transition-colors">
                 <input
                   type="file"
