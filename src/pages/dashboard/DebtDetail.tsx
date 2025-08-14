@@ -200,6 +200,7 @@ const DebtDetail = () => {
           <div>
             <button
               type="button"
+              onClick={()=> navigate(`${PATH.customers}/debt-payment/${debt.id}`)}
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white rounded-xl py-4 font-medium text-base disabled:cursor-not-allowed transition-colors cursor-pointer mt-4"
             >
               Nasiyani so‘ndirish
