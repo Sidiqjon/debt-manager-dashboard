@@ -201,8 +201,8 @@ const DebtCreate: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="containers !pt-4">
+    <div className="min-h-screen">
+      <div className="containers bg-white !pt-4">
 
         <div className="flex items-center justify-between mb-6">
           <img

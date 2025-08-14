@@ -164,7 +164,7 @@ const DebtorDetail: React.FC = () => {
   const debtor = data.data;
 
   return (
-    <div className="containers bg-white !pt-4">
+    <div className="containers bg-white min-h-screen !pt-4">
 
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-9">
