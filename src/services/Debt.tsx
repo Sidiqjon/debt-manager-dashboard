@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { api } from "../api"
 
 export interface ProductImage {
@@ -65,6 +65,8 @@ export interface CreateDebtData {
 }
 
 export const useDebt = () => {
+
+  const queryClient = useQueryClient()
   const getDebtById = (id: string) =>
     useQuery({
       queryKey: ["debt", id],
@@ -78,8 +80,21 @@ export const useDebt = () => {
         api.post("/debts", data).then(res => res.data as DebtResponse)
     })
 
+  const deleteDebt = () =>
+    useMutation({
+      mutationFn: (id: string) =>
+        api.delete(`/debts/${id}`).then(res => res.data),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['debts'] })
+      },
+      onError: (error) => {
+        console.error('Error deleting debt:', error)
+      }
+    })
+
   return {
     getDebtById,
-    createDebt
+    createDebt,
+    deleteDebt
   }
 }

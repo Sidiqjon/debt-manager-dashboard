@@ -100,7 +100,8 @@ const DebtCreate: React.FC = () => {
     }, {
       onSuccess: (data: any) => {
         toast.success("Nasiya muvaffaqiyatli yaratildi")
-        navigate(`${PATH.customers}/detail/${data.data.debtorId}`)
+        navigate(`${PATH.customers}/debt-detail/${data.data.id}`)
+        // navigate(`${PATH.customers}/detail/${data.data.debtorId}`)
       },
       onError: (error: any) => {
         toast.error(error?.message || "Nasiyani yaratishda xatolik")

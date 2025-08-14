@@ -8,6 +8,7 @@ import React from "react"
 import dots from "../../assets/icons/dots.svg"
 import Line from "../../assets/icons/Line.svg"
 import datecalendar from "../../assets/icons/datecalendar.svg"
+import toast from "react-hot-toast"
 
 const deadlineMap: Record<string, string> = {
   ONE_MONTH: "1 oy",
@@ -31,7 +32,38 @@ const DebtDetail = () => {
   const [showModal, setShowModal] = useState(false)
   const [imagePreview, setImagePreview] = useState<string[]>([])
 
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
   const { data: debtData, isLoading } = useDebt().getDebtById(id!)
+
+  const { mutate: deleteDebtMutation, isPending: isDeleting } = useDebt().deleteDebt();
+
+  const handleDeleteDebt = () => {
+    if (!id) {
+      toast.error("Nasiya ID topilmadi!");
+      return;
+    }
+    setConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    const loadingToast = toast.loading("Nasiya o'chirilmoqda...");
+    deleteDebtMutation(id!, {
+      onSuccess: () => {
+        toast.dismiss(loadingToast);
+        toast.success("Nasiya muvaffaqiyatli o'chirildi!", { duration: 4000 });
+        setConfirmOpen(false);
+        setShowModal(false);
+        navigate(`${PATH.customers}/detail/${debt.debtorId}`);
+      },
+      onError: (error) => {
+        toast.dismiss(loadingToast);
+        console.error("Deletion failed:", error);
+        toast.error("Nasiyani o'chirishda xatolik yuz berdi!", { duration: 4000 });
+      }
+    });
+  };
+
 
   useEffect(() => {
     if (debtData?.data?.productImages) {
@@ -86,8 +118,11 @@ const DebtDetail = () => {
                   Tahrirlash
                 </button>
                 <div className="px-4"><img src={Line} alt="" /></div>
-                <button className="w-full px-4 py-2 text-left text-md text-[#F94D4D] hover:bg-gray-100 disabled:opacity-50 cursor-pointer">
-                  O'chirish
+                <button
+                  onClick={handleDeleteDebt}
+                  disabled={isDeleting}
+                  className="w-full px-4 py-2 text-left text-md text-[#F94D4D] hover:bg-gray-100 disabled:opacity-50 cursor-pointer">
+                  {isDeleting ? 'O\'chirilmoqda...' : 'O\'chirish'}
                 </button>
               </div>
             )}
@@ -172,6 +207,33 @@ const DebtDetail = () => {
           </div>
         </form>
       </div>
+
+      {confirmOpen && (
+        <div onClick={() => setConfirmOpen(false)} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-xl shadow-lg max-w-[350px] w-full p-6">
+            <h2 className="text-lg font-semibold text-black mb-2">Nasiyani o'chirish</h2>
+            <p className="text-gray-600 mb-6">
+              Haqiqatan ham bu nasiyani o'chirmoqchimisiz? Bu amalni qaytarib bo'lmaydi.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setConfirmOpen(false)}
+                className="px-4 py-2 rounded-lg bg-[#ECECEC] hover:bg-gray-300 text-black cursor-pointer"
+              >
+                Bekor qilish
+              </button>
+              <button
+                onClick={confirmDelete}
+                disabled={isDeleting}
+                className="px-4 py-2 rounded-lg bg-[#F94D4D] hover:bg-red-600 text-white disabled:opacity-50 cursor-pointer"
+              >
+                {isDeleting ? "O'chirilmoqda..." : "Ha, o'chirish"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showModal && (
         <div
           className="fixed inset-0 z-40"
