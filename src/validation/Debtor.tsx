@@ -10,6 +10,7 @@ export const CreateDebtorSchema = object({
       string()
         .trim()
         .required("Telefon raqami kiritish majburiy")
+        .matches(/^\+998[0-9]{9}$/, "Telefon raqam noto'g'ri formatda. Format: +998xxxxxxxxx")
     )
     .min(1, "Kamida bitta telefon raqami kiritish kerak"),
 
