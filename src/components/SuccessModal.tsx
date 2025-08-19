@@ -6,7 +6,7 @@ import { Button } from 'antd'
 const SuccessModal = () => {
   const navigate = useNavigate()
   return (
-    <div className='fixed z-[9999] top-0 bottom-0 left-0 right-0 bg-white h-[100vh] flex items-center justify-center'>
+    <div className='fixed z-[9999] top-0 bottom-0 left-0 right-0 containers bg-white h-[100vh] flex items-center justify-center'>
         <div className='text-center'>
             <img className='mb-[27px]' src={success} alt="Success img" width={200} height={131} />
             <h2 className='!text-[#3478F7] !mb-[12px] !text-[22px]'>Ajoyib!</h2>

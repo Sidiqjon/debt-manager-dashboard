@@ -29,6 +29,18 @@ export interface Payment {
   createdAt: string
 }
 
+export interface PaymentScheduleType {
+  id: string;
+  debtId: string;
+  amount: string;
+  dueDate: string;
+  isPaid: boolean;
+  paidDate: string | null;
+  paidAmount: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Debt {
   id: string
   debtorId: string
@@ -40,6 +52,7 @@ export interface Debt {
   paid: boolean
   createdAt: string
   updatedAt: string
+  paymentSchedules: Array<PaymentScheduleType>;
   productImages: ProductImage[]
   debtor: Debtor
   payments: Payment[]
