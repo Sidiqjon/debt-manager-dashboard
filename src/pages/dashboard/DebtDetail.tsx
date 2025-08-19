@@ -6,7 +6,7 @@ import Loading from "../../components/Loading"
 import goback_arrow from "../../assets/icons/goback_arrow.svg"
 import React from "react"
 import dots from "../../assets/icons/dots.svg"
-import Line from "../../assets/icons/Line.svg"
+// import Line from "../../assets/icons/Line.svg"
 import datecalendar from "../../assets/icons/datecalendar.svg"
 import toast from "react-hot-toast"
 
@@ -114,10 +114,10 @@ const DebtDetail = () => {
             </button>
             {showModal && (
               <div className="absolute right-0 top-8 overflow-hidden bg-white border border-gray-200 rounded-[16px] shadow-lg py-2 w-34 z-50">
-                <button className="cursor-pointer w-full px-4 py-2 text-left text-md hover:bg-gray-100">
+                {/* <button className="cursor-pointer w-full px-4 py-2 text-left text-md hover:bg-gray-100">
                   Tahrirlash
                 </button>
-                <div className="px-4"><img src={Line} alt="" /></div>
+                <div className="px-4"><img src={Line} alt="" /></div> */}
                 <button
                   onClick={handleDeleteDebt}
                   disabled={isDeleting}

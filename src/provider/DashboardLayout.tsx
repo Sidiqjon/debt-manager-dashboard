@@ -27,6 +27,9 @@ const DashboardLayout = ({children}:{children:ReactNode}) => {
     else if (itemKey === PATH.customers) {
       return location.pathname === PATH.customers || location.pathname === PATH.createCustomer || location.pathname.slice(0, 18) === "/customers/detail/" || location.pathname.slice(0, 18) === "/customers/update/" || location.pathname.slice(0, 23) === "/customers/debt-detail/" || location.pathname.slice(0, 23) === "/customers/debt-create/" || location.pathname.slice(0, 24) === "/customers/debt-payment/"
     }
+    else if (itemKey === PATH.settings) {
+      return location.pathname === PATH.settings || location.pathname.slice(0, 25) === "/settings/seller-profile/"
+    }
     return location.pathname === itemKey
   }
 
