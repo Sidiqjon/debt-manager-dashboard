@@ -98,7 +98,7 @@ export interface SingleDebtorResponse {
 export const useDebtor = () => {
   const queryClient = useQueryClient()
 
-  const getDebtors = (search?: string, page: number = 1, limit: number = 10) =>
+  const getDebtors = (search?: string, page: number = 1, limit: number = 10000) =>
     useQuery({
       queryKey: ["debtors", search, page, limit],
       queryFn: () => {

@@ -30,6 +30,9 @@ const DashboardLayout = ({children}:{children:ReactNode}) => {
     else if (itemKey === PATH.settings) {
       return location.pathname === PATH.settings || location.pathname.slice(0, 25) === "/settings/seller-profile/"
     }
+    else if  (itemKey === PATH.reports) {
+      return location.pathname === PATH.reports || location.pathname.slice(0, 17) === "/reports/message/"
+    }
     return location.pathname === itemKey
   }
 

@@ -12,6 +12,8 @@ import DebtCreate from "../../pages/dashboard/DebtCreate"
 import DebtPayment from "../../pages/dashboard/DebtPayment"
 import Settings from "../../pages/dashboard/Settings"
 import SellerProfile from "../../pages/dashboard/SellerProfile"
+import Message from "../../pages/dashboard/Conversation"
+import Notification from "../../pages/dashboard/Notification"
 
 const DashboardRoutes = () => {
   return (
@@ -26,7 +28,8 @@ const DashboardRoutes = () => {
         <Route path={`${PATH.customers}/debt-detail/:id`} element={<DebtDetail />} />
         <Route path={`${PATH.customers}/debt-create/:id`} element={<DebtCreate />} />
         <Route path={`${PATH.customers}/debt-payment/:id`} element={<DebtPayment />} />
-        <Route path={PATH.reports} element={<div>Hisobot Page</div>} />
+        <Route path={PATH.reports} element={<Notification />} />
+        <Route path={`${PATH.reports}/message/:id`} element={<Message />} />
         <Route path={PATH.settings} element={<Settings />} />
         <Route path={`${PATH.settings}/seller-profile/:id`} element={<SellerProfile />} />
       </Routes>
