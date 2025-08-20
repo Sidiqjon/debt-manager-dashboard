@@ -95,7 +95,8 @@ const Conversation = () => {
     }
   })
 
-  const samples = samplesData?.data?.samples || [];
+  let samples = samplesData?.data?.samples || [];
+  samples = samples.filter((sample: any) => sample.verified === true);
 
   const content = (
     <>
