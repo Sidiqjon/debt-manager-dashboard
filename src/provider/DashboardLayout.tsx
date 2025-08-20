@@ -31,7 +31,7 @@ const DashboardLayout = ({children}:{children:ReactNode}) => {
       return location.pathname === PATH.settings || location.pathname.slice(0, 25) === "/settings/seller-profile/"
     }
     else if  (itemKey === PATH.reports) {
-      return location.pathname === PATH.reports || location.pathname.slice(0, 17) === "/reports/message/"
+      return location.pathname === PATH.reports || location.pathname.slice(0, 17) === "/reports/message/" || location.pathname.slice(0, 17) === `${PATH.reports}/samples` || location.pathname.slice(0, 23) === `${PATH.reports}/samples/create`
     }
     return location.pathname === itemKey
   }

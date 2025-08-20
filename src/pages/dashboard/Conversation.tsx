@@ -7,18 +7,21 @@ import { MoreOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CreateMessageRequest, NotificationType } from "../../services/Message"
 import { messageService } from "../../services/Message";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, useRef, useEffect } from "react";
 import SkeletonButton from "antd/es/skeleton/Button";
 import Loading from "../../components/Loading";
 import React from "react";
 import { useDebtor } from "../../services/Debtor";
 import { DeleteOutlined } from "@ant-design/icons";
+import { useSamples } from "../../services/Samples";
 
 const Conversation = () => {
   const { id: debtorId } = useParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [samplesModalOpen, setSamplesModalOpen] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const FindMonth = (index: number) => {
     const monthList = ["Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun", "Iyul", "Avgust", "Sentabr", "Oktabr", "Noyabr", "Dekabr"];
@@ -31,6 +34,8 @@ const Conversation = () => {
   })
 
   const { data: debtor } = useDebtor().getDebtor(debtorId!);
+  const { data: samplesData } = useSamples();
+  
 
   let conversationMessages = data?.messages?.filter(
     (msg: any) => msg.to === debtorId
@@ -50,6 +55,22 @@ const Conversation = () => {
     }
   })
 
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      const scrollHeight = textarea.scrollHeight;
+      const maxHeight = 70; 
+      textarea.style.height = Math.min(scrollHeight, maxHeight) + 'px';
+      
+      if (scrollHeight > maxHeight) {
+        textarea.style.overflowY = 'auto';
+      } else {
+        textarea.style.overflowY = 'hidden';
+      }
+    }
+  }, [message]);
+
   function handleCreateMessage(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!message.trim() || !debtorId) return
@@ -66,7 +87,6 @@ const Conversation = () => {
     navigate(-1)
   }
 
-  // Delete conversation
   const { mutate: deleteMessage, isPending } = useMutation({
     mutationFn: () => messageService.deleteConversation(debtorId!),
     onSuccess: () => {
@@ -74,6 +94,8 @@ const Conversation = () => {
       navigate(-1)
     }
   })
+
+  const samples = samplesData?.data?.samples || [];
 
   const content = (
     <>
@@ -126,7 +148,7 @@ const Conversation = () => {
               }
 
             </p>
-            <div className="p-4 ml-auto relative max-w-[300px] !mt-[20px] rounded-[16px] bg-[#F5F5F5]">
+            <div style={{ borderRadius: "20px 20px 0px 20px" }} className="p-4 ml-auto relative max-w-[300px] !mt-[20px] bg-[#F5F5F5]">
               <p className="font-normal !text-[13px]">{item.message}</p>
               <span className="text-[10px] absolute bottom-[2px] right-[8px]">
                 {item.createdAt.split("T")[1].split(".")[0]}
@@ -137,17 +159,23 @@ const Conversation = () => {
       </div>
 
       <form onSubmit={handleCreateMessage} autoComplete="off" className="flex fixed w-full border-t-[1px] border-[#ECECEC] px-4 max-w-[400px] bg-white py-[8px] bottom-[67px] mx-auto justify-between items-center">
-        <button type="button" className="cursor-pointer hover:scale-[1.2] duration-300"> 
+        <button 
+          type="button" 
+          className="cursor-pointer hover:scale-[1.2] duration-300"
+          onClick={() => setSamplesModalOpen(true)}> 
           <img src={sample} alt="" />
         </button>
-        <div className="w-[90%] flex items-center justify-between pr-[18px] bg-[#F5F5F5] rounded-[50px]">
+
+        <div className="w-[90%] flex items-center justify-between pr-[18px] bg-[#F5F5F5] rounded-[20px]">
 
           <textarea
+            ref={textareaRef}
             onChange={(e) => setMessage(e.target.value)}
             value={message}
-            className="w-[90%] py-[12px] outline-none pl-[16px] resize-none"
+            className="w-[90%] py-[10px] px-[20px] outline-none resize-none"
             rows={1}
             placeholder="Xabar yuborish..."
+            style={{ maxHeight: '70px' }}
           />
 
           <button type="submit" className="cursor-pointer hover:scale-[1.2] duration-300"> 
@@ -186,6 +214,37 @@ const Conversation = () => {
               >
                 {isPending ? "O'chirilmoqda..." : "Ha, o'chirish"}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {samplesModalOpen && (
+        <div
+          onClick={() => setSamplesModalOpen(false)}
+          className="absolute inset-0 z-40 flex items-end justify-center pb-[150px]"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-xl shadow-lg w-[350px] h-[50vh] flex flex-col border border-gray-200"
+          >
+            <div className="p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold">Namuna xabarlar</h3>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {samples.map((sample: any) => (
+                <div
+                  key={sample.id}
+                  onClick={() => {
+                    setMessage(sample.message);
+                    setSamplesModalOpen(false);
+                  }}
+                  style={{ borderRadius: "20px 20px 0px 20px" }}
+                  className="p-3 border border-gray-200 bg-[#F5F5F5]  cursor-pointer hover:bg-gray-200 transition-colors"
+                >
+                  <p className="text-sm text-gray-800">{sample.message}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

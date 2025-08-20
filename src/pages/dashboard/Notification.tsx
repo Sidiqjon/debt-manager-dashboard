@@ -35,7 +35,9 @@ const Notification = () => {
       <div className="containers bg-white !pt-4 !pb-[18px] border-b-[1px] border-[#ECECEC]">
         <div className="flex items-center justify-between ">
           <h2 className="!font-bold !text-[22px]">Hisobot</h2>
-          <img src={sample} alt="" className="w-4 h-4 cursor-pointer" />
+          {showMessage === "Xabarlar tarixi" && (
+            <img src={sample} alt="" className="w-4 h-4 cursor-pointer" onClick={() => navigate(`${PATH.reports}/samples`)} />
+          )}
         </div>
       </div>
       <div className="containers bg-white min-h-screen !pt-4">
