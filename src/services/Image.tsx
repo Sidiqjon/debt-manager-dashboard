@@ -20,7 +20,7 @@ export const useUploadImages = () => {
   return useMutation({
     mutationFn: async (files: File[]) => {
       const formData = new FormData()
-      files.forEach((file, index) => {
+      files.forEach((file, _) => {
         formData.append(`files`, file)
       })
       
